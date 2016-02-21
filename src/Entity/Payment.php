@@ -27,4 +27,11 @@ class Payment extends EventSourcedAggregateRoot
         $payment->apply(new Payment\CreatedEvent($paymentId));
         return $payment;
     }
+
+    /**
+     * @param $paymentId
+     */
+    public function capture($paymentId) {
+        $this->apply(new Payment\CapturedEvent($paymentId));
+    }
 }
