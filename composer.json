@@ -1,0 +1,16 @@
+{
+    "name": "rojoa/event-sourcing",
+    "description": "Event Sourcing Pet Project",
+    "require": {
+        "broadway/broadway": "^0.8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "authors": [
+        {
+            "name": "rojoangel",
+            "email": "rojo.angel@gmail.com"
+        }
+    ]
+}
