@@ -11,4 +11,4 @@ install:
   - composer install
 
 script:
-  - php php-cs-fixer --diff --dry-run -v fix .
+  - ./vendor/bin/php-cs-fixer --diff --dry-run -v fix .
