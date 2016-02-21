@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Event\Payment;
-
 
 class CancelledEvent
 {
@@ -11,6 +9,7 @@ class CancelledEvent
 
     /**
      * CancelledEvent constructor.
+     *
      * @param $paymentId
      */
     public function __construct($paymentId)

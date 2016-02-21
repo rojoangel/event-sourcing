@@ -1,17 +1,15 @@
 <?php
 
-
 namespace Event\Payment;
-
 
 class CapturedEvent
 {
-
     /** @var string */
     private $paymentId;
 
     /**
      * CapturedEvent constructor.
+     *
      * @param string $paymentId
      */
     public function __construct($paymentId)
