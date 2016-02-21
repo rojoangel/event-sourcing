@@ -1,4 +1,11 @@
 engines:
+  phpcodesniffer:
+    enabled: true
+  phpmd:
+    enabled: true
+    config:
+      file_extensions:
+        - php
   duplication:
     enabled: true
     config:
@@ -6,10 +13,14 @@ engines:
       - php
   fixme:
     enabled: true
-  phpmd:
-    enabled: true
+    config:
+      strings:
+      - FIXME
+      - BUG
+      - TODO
 ratings:
   paths:
   - "**.php"
-exclude_paths: []
+exclude_paths:
+  - vendor/
 
