@@ -20,6 +20,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
 
     /**
      * PaymentAggregate constructor.
+     *
      * @param string $paymentId
      */
     public function __construct($paymentId)
