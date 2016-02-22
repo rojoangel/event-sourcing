@@ -43,7 +43,7 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([new CreatedEvent($paymentId)]);
     }
 
-    public function testNewPaymentsCanBeCaptured()
+    public function testNewPaymentCanBeCaptured()
     {
         $paymentId = $this->generator->generate();
         $this->scenario
@@ -53,5 +53,17 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
                 $aggregate->capture();
             })
             ->then([new CapturedEvent($paymentId)]);
+    }
+
+    public function testCaptureCapturedPaymentYieldsNoChange()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId), new CapturedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->capture();
+            })
+            ->then([]);
     }
 }

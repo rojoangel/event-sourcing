@@ -3,7 +3,7 @@
     "description": "Event Sourcing Pet Project",
     "require": {
         "broadway/broadway": "^0.8.0",
-	"winzou/state-machine": "^0.2.2" 
+	    "winzou/state-machine": "^0.2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
