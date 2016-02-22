@@ -5,6 +5,7 @@ namespace Entity;
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
 use Broadway\UuidGenerator\Rfc4122\Version4Generator;
 use Broadway\UuidGenerator\UuidGeneratorInterface;
+use Event\Payment\CapturedEvent;
 use Event\Payment\CreatedEvent;
 
 class PaymentAggregateTest extends AggregateRootScenarioTestCase
@@ -37,8 +38,32 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
 
         $this->scenario
             ->when(function () use ($paymentId) {
-                return new PaymentAggregate($paymentId);
+                return PaymentAggregate::create($paymentId);
             })
             ->then([new CreatedEvent($paymentId)]);
+    }
+
+    public function testNewPaymentCanBeCaptured()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->capture();
+            })
+            ->then([new CapturedEvent($paymentId)]);
+    }
+
+    public function testCaptureCapturedPaymentYieldsNoChange()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId), new CapturedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->capture();
+            })
+            ->then([]);
     }
 }
