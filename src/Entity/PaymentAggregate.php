@@ -123,10 +123,9 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     }
 
     /**
-     * @param Payment\CapturedEvent $event
      * @throws \SM\SMException
      */
-    protected function applyCapturedEvent(Payment\CapturedEvent $event)
+    protected function applyCapturedEvent()
     {
         $stateMachine = new StateMachine($this, $this->config);
         $stateMachine->apply('capture');
