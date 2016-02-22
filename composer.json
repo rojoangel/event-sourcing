@@ -9,6 +9,11 @@
         "phpunit/phpunit": "^4.8",
         "fabpot/php-cs-fixer": "^1.11"
     },
+    "autoload": {
+        "psr-4" : {
+            "": ["src/", "tests/"]
+        }
+    },
     "authors": [
         {
             "name": "rojoangel",
