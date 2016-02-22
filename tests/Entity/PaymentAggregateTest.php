@@ -28,14 +28,17 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
         return PaymentAggregate::class;
     }
 
+    /**
+     *
+     */
     public function testCreate()
     {
-        $id = $this->generator->generate();
+        $paymentId = $this->generator->generate();
 
         $this->scenario
-            ->when(function () use ($id) {
-                return new PaymentAggregate($id);
+            ->when(function () use ($paymentId) {
+                return new PaymentAggregate($paymentId);
             })
-            ->then([new CreatedEvent($id)]);
+            ->then([new CreatedEvent($paymentId)]);
     }
 }
