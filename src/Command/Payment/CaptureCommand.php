@@ -16,4 +16,12 @@ class CaptureCommand
     {
         $this->paymentId = $paymentId;
     }
+
+    /**
+     * @return string
+     */
+    public function getPaymentId()
+    {
+        return $this->paymentId;
+    }
 }

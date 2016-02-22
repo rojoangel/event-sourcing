@@ -5,7 +5,7 @@ namespace Entity;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Event\Payment;
 
-class Payment extends EventSourcedAggregateRoot
+class PaymentAggregate extends EventSourcedAggregateRoot
 {
     /** @var string */
     private $paymentId;
@@ -20,36 +20,38 @@ class Payment extends EventSourcedAggregateRoot
 
     /**
      * @param string $paymentId
-     * @return \Entity\Payment
+     *
+     * @return PaymentAggregate
      */
     public static function create($paymentId)
     {
-        $payment = new Payment();
+        $payment = new self();
         $payment->apply(new Payment\CreatedEvent($paymentId));
+
         return $payment;
     }
 
     /**
-     * @param $paymentId
+     *
      */
-    public function capture($paymentId)
+    public function capture()
     {
-        $this->apply(new Payment\CapturedEvent($paymentId));
+        $this->apply(new Payment\CapturedEvent($this->paymentId));
     }
 
     /**
-     * @param $paymentId
+     *
      */
-    public function refund($paymentId)
+    public function refund()
     {
-        $this->apply(new Payment\RefundedEvent($paymentId));
+        $this->apply(new Payment\RefundedEvent($this->paymentId));
     }
 
     /**
-     * @param $paymentId
+     *
      */
-    public function cancel($paymentId)
+    public function cancel()
     {
-        $this->apply(new Payment\CancelledEvent($paymentId));
+        $this->apply(new Payment\CancelledEvent($this->paymentId));
     }
 }
