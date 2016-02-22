@@ -31,7 +31,7 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
     /**
      *
      */
-    public function testCreate()
+    public function testNewPaymentTriggersCreatedEvent()
     {
         $paymentId = $this->generator->generate();
 
