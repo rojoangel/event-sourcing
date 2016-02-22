@@ -19,16 +19,13 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     }
 
     /**
+     * PaymentAggregate constructor.
      * @param string $paymentId
-     *
-     * @return PaymentAggregate
      */
-    public static function create($paymentId)
+    public function __construct($paymentId)
     {
-        $payment = new self();
-        $payment->apply(new Payment\CreatedEvent($paymentId));
-
-        return $payment;
+        $this->paymentId = $paymentId;
+        $this->apply(new Payment\CreatedEvent($this->paymentId));
     }
 
     /**

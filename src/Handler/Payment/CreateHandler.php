@@ -27,7 +27,7 @@ class CreateHandler extends CommandHandler
      */
     public function handleCreateCommand(Payment\CreateCommand $command)
     {
-        $payment = PaymentAggregate::create($command->getPaymentId());
+        $payment = new PaymentAggregate($command->getPaymentId());
         $this->repository->save($payment);
     }
 }
