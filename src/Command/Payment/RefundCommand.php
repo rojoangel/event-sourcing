@@ -16,4 +16,12 @@ class RefundCommand
     {
         $this->paymentId = $paymentId;
     }
+
+    /**
+     * @return string
+     */
+    public function getPaymentId()
+    {
+        return $this->paymentId;
+    }
 }
