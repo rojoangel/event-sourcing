@@ -35,7 +35,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
                 'to'   => 'refunded'
             ],
             'cancel' => [
-                'from' => ['confirmed'],
+                'from' => ['checkout'],
                 'to'   => 'cancelled'
             ]
         ],

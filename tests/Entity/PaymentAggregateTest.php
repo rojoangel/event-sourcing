@@ -5,6 +5,7 @@ namespace Entity;
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
 use Broadway\UuidGenerator\Rfc4122\Version4Generator;
 use Broadway\UuidGenerator\UuidGeneratorInterface;
+use Event\Payment\CancelledEvent;
 use Event\Payment\CapturedEvent;
 use Event\Payment\CreatedEvent;
 use Event\Payment\RefundedEvent;
@@ -125,5 +126,17 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
                 $aggregate->refund();
             })
             ->then([]);
+    }
+
+    public function testNewPaymentCanBeCancelled()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->cancel();
+            })
+            ->then([new CancelledEvent($paymentId)]);
     }
 }
