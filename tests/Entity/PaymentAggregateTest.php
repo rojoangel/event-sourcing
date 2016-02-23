@@ -7,6 +7,7 @@ use Broadway\UuidGenerator\Rfc4122\Version4Generator;
 use Broadway\UuidGenerator\UuidGeneratorInterface;
 use Event\Payment\CapturedEvent;
 use Event\Payment\CreatedEvent;
+use Event\Payment\RefundedEvent;
 use RuntimeException;
 
 class PaymentAggregateTest extends AggregateRootScenarioTestCase
@@ -91,4 +92,20 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
                 $aggregate->refund();
             });
     }
+
+    /**
+     *
+     */
+    public function testConfirmedPaymentCanBeRefunded()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId), new CapturedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->refund();
+            })
+            ->then([new RefundedEvent($paymentId)]);
+    }
+
 }
