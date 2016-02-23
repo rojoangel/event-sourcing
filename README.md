@@ -9,4 +9,6 @@ Event sourcing pet project
 [![Code Climate](https://codeclimate.com/github/rojoangel/event-sourcing/badges/gpa.svg)](https://codeclimate.com/github/rojoangel/event-sourcing)
 [![Test Coverage](https://codeclimate.com/github/rojoangel/event-sourcing/badges/coverage.svg)](https://codeclimate.com/github/rojoangel/event-sourcing/coverage)
 
+[![codecov.io](https://codecov.io/github/rojoangel/event-sourcing/coverage.svg?branch=master)](https://codecov.io/github/rojoangel/event-sourcing?branch=master)
+
 [![StyleCI](https://styleci.io/repos/52225197/shield)](https://styleci.io/repos/52225197)
