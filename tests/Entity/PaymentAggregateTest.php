@@ -7,12 +7,16 @@ use Broadway\UuidGenerator\Rfc4122\Version4Generator;
 use Broadway\UuidGenerator\UuidGeneratorInterface;
 use Event\Payment\CapturedEvent;
 use Event\Payment\CreatedEvent;
+use RuntimeException;
 
 class PaymentAggregateTest extends AggregateRootScenarioTestCase
 {
     /** @var UuidGeneratorInterface */
     private $generator;
 
+    /**
+     *
+     */
     public function setUp()
     {
         parent::setUp();
@@ -43,6 +47,9 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([new CreatedEvent($paymentId)]);
     }
 
+    /**
+     *
+     */
     public function testNewPaymentCanBeCaptured()
     {
         $paymentId = $this->generator->generate();
@@ -55,6 +62,9 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([new CapturedEvent($paymentId)]);
     }
 
+    /**
+     *
+     */
     public function testCaptureCapturedPaymentYieldsNoChange()
     {
         $paymentId = $this->generator->generate();
@@ -65,5 +75,20 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
                 $aggregate->capture();
             })
             ->then([]);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessageRegExp /Payment '[-A-Za-z0-9]+' in status 'pending' cannot be refunded./
+     */
+    public function testNewPaymentCannotBeRefunded()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->refund();
+            });
     }
 }
