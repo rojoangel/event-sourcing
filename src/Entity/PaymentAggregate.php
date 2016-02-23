@@ -4,6 +4,7 @@ namespace Entity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Event\Payment;
+use RuntimeException;
 use SM\StateMachine\StateMachine;
 
 class PaymentAggregate extends EventSourcedAggregateRoot
@@ -30,7 +31,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
                 'to'   => 'confirmed'
             ],
             'refund' => [
-                'from' => ['checkout', 'pending'],
+                'from' => ['confirmed'],
                 'to'   => 'refunded'
             ],
             'cancel' => [
@@ -99,6 +100,16 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function refund()
     {
+        $stateMachine = new StateMachine($this, $this->config);
+        if (!$stateMachine->can('refund')){
+            throw new RuntimeException(
+                sprintf(
+                    'Payment \'%s\' in status \'%s\' cannot be refunded.',
+                    $this->paymentId,
+                    $stateMachine->getState()
+                ));
+        }
+
         $this->apply(new Payment\RefundedEvent($this->paymentId));
     }
 
