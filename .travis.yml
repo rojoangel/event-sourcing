@@ -8,18 +8,18 @@ addons:
     code_climate:
         repo_token: b3f63bc2e90be1cfdd303ed9112d3dfeba51d60b3dd2dfe2d9ec101e49e4d1a0
 
+before_install:
+  - pip install --user codecov
+
 install:
   - composer install
 
 script:
   - ./vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
 
-before_install:
-  - pip install --user codecov
-
 after_success:
   - codecov
 
-after_script:
-  - php ./vendor/bin/codacycoverage clover ./build/logs/clover.xml
-  - ./vendor/bin/test-reporter
+# after_script:
+  #- php ./vendor/bin/codacycoverage clover ./build/logs/clover.xml
+  #- ./vendor/bin/test-reporter
