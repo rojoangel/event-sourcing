@@ -35,7 +35,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
                 'to'   => 'refunded'
             ],
             'cancel' => [
-                'from' => ['checkout'],
+                'from' => ['pending'],
                 'to'   => 'cancelled'
             ]
         ],
@@ -123,6 +123,12 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function cancel()
     {
+        $stateMachine = new StateMachine($this, $this->config);
+
+        if ($stateMachine->getState() == 'cancelled') {
+            return;
+        }
+
         $this->apply(new Payment\CancelledEvent($this->paymentId));
     }
 
@@ -154,5 +160,14 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     {
         $stateMachine = new StateMachine($this, $this->config);
         $stateMachine->apply('refund');
+    }
+
+    /**
+     * @throws \SM\SMException
+     */
+    protected function applyCancelledEvent()
+    {
+        $stateMachine = new StateMachine($this, $this->config);
+        $stateMachine->apply('cancel');
     }
 }
