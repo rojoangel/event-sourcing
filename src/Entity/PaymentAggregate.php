@@ -101,7 +101,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     public function refund()
     {
         $stateMachine = new StateMachine($this, $this->config);
-        if (!$stateMachine->can('refund')){
+        if (!$stateMachine->can('refund')) {
             throw new RuntimeException(
                 sprintf(
                     'Payment \'%s\' in status \'%s\' cannot be refunded.',
