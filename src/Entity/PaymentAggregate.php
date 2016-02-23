@@ -129,6 +129,15 @@ class PaymentAggregate extends EventSourcedAggregateRoot
             return;
         }
 
+        if (!$stateMachine->can('cancel')) {
+            throw new RuntimeException(
+                sprintf(
+                    'Payment \'%s\' in status \'%s\' cannot be cancelled.',
+                    $this->paymentId,
+                    $stateMachine->getState()
+                ));
+        }
+
         $this->apply(new Payment\CancelledEvent($this->paymentId));
     }
 

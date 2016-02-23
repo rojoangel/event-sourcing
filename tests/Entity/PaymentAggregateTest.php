@@ -128,6 +128,9 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
+    /**
+     *
+     */
     public function testNewPaymentCanBeCancelled()
     {
         $paymentId = $this->generator->generate();
@@ -140,6 +143,9 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([new CancelledEvent($paymentId)]);
     }
 
+    /**
+     *
+     */
     public function testCancelCancelledPaymentYieldsNoChange()
     {
         $paymentId = $this->generator->generate();
@@ -152,4 +158,18 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessageRegExp /Payment '[-A-Za-z0-9]+' in status 'confirmed' cannot be cancelled./
+     */
+    public function testConfirmedPaymentCannotBeCancelled()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([new CreatedEvent($paymentId), new CapturedEvent($paymentId)])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->cancel();
+            });
+    }
 }
