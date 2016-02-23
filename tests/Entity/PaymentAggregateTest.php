@@ -108,4 +108,22 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
             ->then([new RefundedEvent($paymentId)]);
     }
 
+    /**
+     *
+     */
+    public function testRefundRefundedPaymentYieldsNoChange()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([
+                new CreatedEvent($paymentId),
+                new CapturedEvent($paymentId),
+                new RefundedEvent($paymentId)
+            ])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->refund();
+            })
+            ->then([]);
+    }
 }
