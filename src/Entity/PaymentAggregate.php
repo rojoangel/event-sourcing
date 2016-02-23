@@ -101,6 +101,11 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     public function refund()
     {
         $stateMachine = new StateMachine($this, $this->config);
+
+        if ($stateMachine->getState() == 'refunded') {
+            return;
+        }
+
         if (!$stateMachine->can('refund')) {
             throw new RuntimeException(
                 sprintf(
@@ -140,5 +145,14 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     {
         $stateMachine = new StateMachine($this, $this->config);
         $stateMachine->apply('capture');
+    }
+
+    /**
+     * @throws \SM\SMException
+     */
+    protected function applyRefundedEvent()
+    {
+        $stateMachine = new StateMachine($this, $this->config);
+        $stateMachine->apply('refund');
     }
 }
