@@ -172,4 +172,23 @@ class PaymentAggregateTest extends AggregateRootScenarioTestCase
                 $aggregate->cancel();
             });
     }
+
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessageRegExp /Payment '[-A-Za-z0-9]+' in status 'refunded' cannot be cancelled./
+     */
+    public function testRefundedPaymentCannotBeCancelled()
+    {
+        $paymentId = $this->generator->generate();
+        $this->scenario
+            ->withAggregateId($paymentId)
+            ->given([
+                new CreatedEvent($paymentId),
+                new CapturedEvent($paymentId),
+                new RefundedEvent($paymentId)
+            ])
+            ->when(function (PaymentAggregate $aggregate) {
+                $aggregate->cancel();
+            });
+    }
 }
