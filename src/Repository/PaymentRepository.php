@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Repository;
-
 
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
