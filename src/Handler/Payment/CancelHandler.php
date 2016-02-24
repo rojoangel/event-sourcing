@@ -22,7 +22,7 @@ class CancelHandler extends CommandHandler
         $this->repository = $repository;
     }
 
-    public function handleRefundCommand(Payment\CancelCommand $command)
+    public function handleCancelCommand(Payment\CancelCommand $command)
     {
         /** @var PaymentAggregate $payment */
         $payment = $this->repository->load($command->getPaymentId());
