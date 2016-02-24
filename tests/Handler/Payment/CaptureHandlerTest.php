@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Handler\Payment;
-
 
 use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
