@@ -22,6 +22,9 @@ class CancelHandlerTest extends CommandHandlerScenarioTestCase
     /** @var UuidGeneratorInterface */
     private $generator;
 
+    /**
+     *
+     */
     public function setUp()
     {
         parent::setUp();
