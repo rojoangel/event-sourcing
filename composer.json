@@ -20,5 +20,10 @@
             "name": "rojoangel",
             "email": "rojo.angel@gmail.com"
         }
-    ]
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "v0.1.x"
+        }
+    }
 }
