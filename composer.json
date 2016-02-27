@@ -1,5 +1,5 @@
 {
-    "name": "rojoa/event-sourcing",
+    "name": "rojoangel/event-sourcing",
     "description": "Event Sourcing Pet Project",
     "require": {
         "broadway/broadway": "^0.8.0",
