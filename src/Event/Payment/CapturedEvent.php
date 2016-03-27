@@ -2,7 +2,9 @@
 
 namespace Event\Payment;
 
-class CapturedEvent
+use Broadway\Serializer\SerializableInterface;
+
+class CapturedEvent implements SerializableInterface
 {
     /** @var string */
     private $paymentId;
@@ -23,5 +25,23 @@ class CapturedEvent
     public function getPaymentId()
     {
         return $this->paymentId;
+    }
+
+    /**
+     * @return mixed The object instance
+     */
+    public static function deserialize(array $data)
+    {
+        return new self($data['paymentId']);
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'paymentId' => $this->paymentId
+        ];
     }
 }
