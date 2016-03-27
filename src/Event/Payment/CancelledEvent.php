@@ -2,7 +2,9 @@
 
 namespace Event\Payment;
 
-class CancelledEvent
+use Broadway\Serializer\SerializableInterface;
+
+class CancelledEvent implements SerializableInterface
 {
     /** @var string */
     private $paymentId;
@@ -23,5 +25,23 @@ class CancelledEvent
     public function getPaymentId()
     {
         return $this->paymentId;
+    }
+
+    /**
+     * @return mixed The object instance
+     */
+    public static function deserialize(array $data)
+    {
+        return new self($data['paymentId']);
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'paymentId' => $this->paymentId
+        ];
     }
 }
