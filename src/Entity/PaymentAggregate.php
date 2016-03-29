@@ -6,46 +6,25 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Event\Payment;
 use RuntimeException;
 use SM\StateMachine\StateMachine;
+use StateMachine\PaymentStateMachine;
 
 class PaymentAggregate extends EventSourcedAggregateRoot
 {
 
-    /** @var array */
-    private $config = [
-        'graph' => 'paymentGraph',
-        'property_path' => 'state',
-        'states' => [
-            'checkout',
-            'pending',
-            'confirmed',
-            'refunded',
-            'cancelled'
-        ],
-        'transitions' => [
-            'create' => [
-                'from' => ['checkout', 'pending'],
-                'to'   => 'pending'
-            ],
-            'capture' => [
-                'from' => ['checkout', 'pending'],
-                'to'   => 'confirmed'
-            ],
-            'refund' => [
-                'from' => ['confirmed'],
-                'to'   => 'refunded'
-            ],
-            'cancel' => [
-                'from' => ['pending'],
-                'to'   => 'cancelled'
-            ]
-        ],
-    ];
-
     /** @var string */
-    private $state = 'checkout';
+    private $state;
 
     /** @var string */
     private $paymentId;
+
+    /** @var StateMachine */
+    private $stateMachine;
+
+    public function __construct()
+    {
+        $this->state = 'checkout';
+        $this->stateMachine = new PaymentStateMachine($this);
+    }
 
     /**
      * @return string
@@ -89,8 +68,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function capture()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        if ($stateMachine->getState() !== 'confirmed') {
+        if ($this->stateMachine->getState() !== 'confirmed') {
             $this->apply(new Payment\CapturedEvent($this->paymentId));
         }
     }
@@ -100,18 +78,16 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function refund()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-
-        if ($stateMachine->getState() == 'refunded') {
+        if ($this->stateMachine->getState() == 'refunded') {
             return;
         }
 
-        if (!$stateMachine->can('refund')) {
+        if (!$this->stateMachine->can('refund')) {
             throw new RuntimeException(
                 sprintf(
                     'Payment \'%s\' in status \'%s\' cannot be refunded.',
                     $this->paymentId,
-                    $stateMachine->getState()
+                    $this->stateMachine->getState()
                 ));
         }
 
@@ -123,18 +99,16 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function cancel()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-
-        if ($stateMachine->getState() == 'cancelled') {
+        if ($this->stateMachine->getState() == 'cancelled') {
             return;
         }
 
-        if (!$stateMachine->can('cancel')) {
+        if (!$this->stateMachine->can('cancel')) {
             throw new RuntimeException(
                 sprintf(
                     'Payment \'%s\' in status \'%s\' cannot be cancelled.',
                     $this->paymentId,
-                    $stateMachine->getState()
+                    $this->stateMachine->getState()
                 ));
         }
 
@@ -149,8 +123,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     protected function applyCreatedEvent(Payment\CreatedEvent $event)
     {
         $this->paymentId = $event->getPaymentId();
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('create');
+        $this->stateMachine->apply('create');
     }
 
     /**
@@ -158,8 +131,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyCapturedEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('capture');
+        $this->stateMachine->apply('capture');
     }
 
     /**
@@ -167,8 +139,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyRefundedEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('refund');
+        $this->stateMachine->apply('refund');
     }
 
     /**
@@ -176,7 +147,6 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyCancelledEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('cancel');
+        $this->stateMachine->apply('cancel');
     }
 }
