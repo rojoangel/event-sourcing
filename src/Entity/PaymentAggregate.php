@@ -6,40 +6,10 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Event\Payment;
 use RuntimeException;
 use SM\StateMachine\StateMachine;
+use StateMachine\PaymentStateMachine;
 
 class PaymentAggregate extends EventSourcedAggregateRoot
 {
-
-    /** @var array */
-    private $config = [
-        'graph' => 'paymentGraph',
-        'property_path' => 'state',
-        'states' => [
-            'checkout',
-            'pending',
-            'confirmed',
-            'refunded',
-            'cancelled'
-        ],
-        'transitions' => [
-            'create' => [
-                'from' => ['checkout', 'pending'],
-                'to'   => 'pending'
-            ],
-            'capture' => [
-                'from' => ['checkout', 'pending'],
-                'to'   => 'confirmed'
-            ],
-            'refund' => [
-                'from' => ['confirmed'],
-                'to'   => 'refunded'
-            ],
-            'cancel' => [
-                'from' => ['pending'],
-                'to'   => 'cancelled'
-            ]
-        ],
-    ];
 
     /** @var string */
     private $state;
@@ -53,7 +23,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     public function __construct()
     {
         $this->state = 'checkout';
-        $this->stateMachine = new StateMachine($this, $this->config);
+        $this->stateMachine = new PaymentStateMachine($this);
     }
 
     /**
