@@ -42,15 +42,15 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     ];
 
     /** @var string */
-    private $state = 'checkout';
+    private $state;
 
     /** @var string */
     private $paymentId;
 
     public function __construct()
     {
+        $this->state = 'checkout';
     }
-
 
     /**
      * @return string
