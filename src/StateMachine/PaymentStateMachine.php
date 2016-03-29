@@ -54,6 +54,4 @@ class PaymentStateMachine extends StateMachine
     {
         parent::__construct($object, $this->paymentConfig, $dispatcher, $callbackFactory);
     }
-
-
 }
