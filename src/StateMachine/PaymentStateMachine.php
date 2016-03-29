@@ -2,6 +2,7 @@
 
 namespace StateMachine;
 
+use Entity\PaymentAggregate;
 use SM\Callback\CallbackFactoryInterface;
 use SM\SMException;
 use SM\StateMachine\StateMachine;
@@ -41,14 +42,14 @@ class PaymentStateMachine extends StateMachine
     ];
 
     /**
-     * @param object                   $object          Underlying object for the state machine
+     * @param PaymentAggregate         $object          Underlying object for the state machine
      * @param EventDispatcherInterface $dispatcher      EventDispatcher or null not to dispatch events
      * @param CallbackFactoryInterface $callbackFactory CallbackFactory or null to use the default one
      *
      * @throws SMException If object doesn't have configured property path for state
      */
     public function __construct(
-        $object,
+        PaymentAggregate $object,
         EventDispatcherInterface $dispatcher = null,
         CallbackFactoryInterface $callbackFactory = null)
     {
