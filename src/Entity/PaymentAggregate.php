@@ -47,6 +47,11 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     /** @var string */
     private $paymentId;
 
+    public function __construct()
+    {
+    }
+
+
     /**
      * @return string
      */
