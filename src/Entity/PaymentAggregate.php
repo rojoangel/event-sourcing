@@ -47,9 +47,13 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     /** @var string */
     private $paymentId;
 
+    /** @var StateMachine */
+    private $stateMachine;
+
     public function __construct()
     {
         $this->state = 'checkout';
+        $this->stateMachine = new StateMachine($this, $this->config);
     }
 
     /**
@@ -94,8 +98,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function capture()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        if ($stateMachine->getState() !== 'confirmed') {
+        if ($this->stateMachine->getState() !== 'confirmed') {
             $this->apply(new Payment\CapturedEvent($this->paymentId));
         }
     }
@@ -105,18 +108,16 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function refund()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-
-        if ($stateMachine->getState() == 'refunded') {
+        if ($this->stateMachine->getState() == 'refunded') {
             return;
         }
 
-        if (!$stateMachine->can('refund')) {
+        if (!$this->stateMachine->can('refund')) {
             throw new RuntimeException(
                 sprintf(
                     'Payment \'%s\' in status \'%s\' cannot be refunded.',
                     $this->paymentId,
-                    $stateMachine->getState()
+                    $this->stateMachine->getState()
                 ));
         }
 
@@ -128,18 +129,16 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     public function cancel()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-
-        if ($stateMachine->getState() == 'cancelled') {
+        if ($this->stateMachine->getState() == 'cancelled') {
             return;
         }
 
-        if (!$stateMachine->can('cancel')) {
+        if (!$this->stateMachine->can('cancel')) {
             throw new RuntimeException(
                 sprintf(
                     'Payment \'%s\' in status \'%s\' cannot be cancelled.',
                     $this->paymentId,
-                    $stateMachine->getState()
+                    $this->stateMachine->getState()
                 ));
         }
 
@@ -154,8 +153,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
     protected function applyCreatedEvent(Payment\CreatedEvent $event)
     {
         $this->paymentId = $event->getPaymentId();
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('create');
+        $this->stateMachine->apply('create');
     }
 
     /**
@@ -163,8 +161,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyCapturedEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('capture');
+        $this->stateMachine->apply('capture');
     }
 
     /**
@@ -172,8 +169,7 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyRefundedEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('refund');
+        $this->stateMachine->apply('refund');
     }
 
     /**
@@ -181,7 +177,6 @@ class PaymentAggregate extends EventSourcedAggregateRoot
      */
     protected function applyCancelledEvent()
     {
-        $stateMachine = new StateMachine($this, $this->config);
-        $stateMachine->apply('cancel');
+        $this->stateMachine->apply('cancel');
     }
 }
